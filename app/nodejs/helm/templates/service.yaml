@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nodejs-microservice.fullname" . }}
+  labels:
+    {{- include "nodejs-microservice.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: {{ include "nodejs-microservice.name" . }}
+  type: {{ .Values.service.type }}
+

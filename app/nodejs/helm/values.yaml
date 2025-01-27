@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: nodejs-microservice
+  pullPolicy: Always
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  name: ""
+  annotations: {}
+  hosts:
+    - host: nodejs.example.com
+      paths:
+        - /
+  tls:

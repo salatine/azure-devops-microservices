@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: fastapi-microservice
+  pullPolicy: Always
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: true
+  name: ""
+  annotations: {}
+  hosts:
+    - host: fastapi.example.com
+      paths:
+        - /
+  tls: []

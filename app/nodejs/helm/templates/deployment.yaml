@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nodejs-microservice.fullname" . }}
+  labels:
+    {{- include "nodejs-microservice.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "nodejs-microservice.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "nodejs-microservice.name" . }}
+    spec:
+      containers:
+        - name: nodejs-microservice
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 3000
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+

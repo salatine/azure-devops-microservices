@@ -1,0 +1,60 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  aws_region: 'us-west-2'
+  azure_region: 'East US'
+  aks_cluster_name: 'azure-aks-cluster'
+  eks_cluster_name: 'aws-eks-cluster'
+  aks_kubeconfig: '$(System.DefaultWorkingDirectory)/kubeconfig/azure-kubeconfig'
+  eks_kubeconfig: '$(System.DefaultWorkingDirectory)/kubeconfig/aws-kubeconfig'
+
+stages:
+  - stage: DeployToAWS
+    jobs:
+      - job: DeployToEKS
+        steps:
+          - task: Docker@2
+            inputs:
+              command: 'buildAndPush'
+              repository: '$(ACR_NAME)/nodejs'
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              tags: '$(Build.BuildId)'
+              containerRegistry: '$(ACR_NAME)'
+
+          - task: AWSCLI@1
+            inputs:
+              awsCredentials: 'aws-service-connection'
+              regionName: $(aws_region)
+              command: 'eks update-kubeconfig --name $(eks_cluster_name) --region $(aws_region)'
+
+          - script: |
+              kubectl apply -f app/nodejs/helm/templates/deployment.yaml
+            displayName: 'Deploy Node.js to EKS'
+
+  - stage: DeployToAzure
+    jobs:
+      - job: DeployToAKS
+        steps:
+          - task: Docker@2
+            inputs:
+              command: 'buildAndPush'
+              repository: '$(ACR_NAME)/nodejs'
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              tags: '$(Build.BuildId)'
+              containerRegistry: '$(ACR_NAME)'
+
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'azure-service-connection'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az aks get-credentials --resource-group $(resource_group_name) --name $(aks_cluster_name)
+                kubectl apply -f app/nodejs/helm/templates/deployment.yaml
+            displayName: 'Deploy Node.js to AKS'
