@@ -4,9 +4,9 @@ This project automates the deployment of a microservices-based, scalable and mul
 ## Overview
 
 Each directory is structured to support multi-cloud deployment and provide a scalable, automated infrastructure for the microservices:
-- **infra**: Contains Terraform scripts for provisioning AWS and Azure resources like EKS/AKS, RDS/PostgreSQL, and CloudWatch/Azure Monitor.
-- **app**: Holds the microservices (FastAPI and Node.js) along with Dockerfiles and Helm charts for deployment.
-- **azure-pipelines**: Includes YAML files for CI/CD pipelines in Azure DevOps, automating the build and deployment processes.
+- **infra/**: Contains Terraform scripts for provisioning AWS and Azure resources like EKS/AKS, RDS/PostgreSQL, and CloudWatch/Azure Monitor.
+- **app/**: Holds the microservices (FastAPI and Node.js) along with Dockerfiles and Helm charts for deployment.
+- **azure-pipelines/**: Includes YAML files for CI/CD pipelines in Azure DevOps, automating the build and deployment processes.
 
 ## Running
 
